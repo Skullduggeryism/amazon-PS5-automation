@@ -2,7 +2,7 @@
 
 **Use at your own risk. Read thoroughly**
 
-Example: script to buy items on Amazon (Please do not use this script for scalping, this is simply a free open source solution for those that want a console but are unable to get one due to market competitiveness)
+Example: script to buy items on Amazon (Please do not use this script for scalping, this is simply a free open source solution for those that want an item but are unable to get one due to market competitiveness)
 
 
 forked from yosh1/amazon-automation & druyang/amazon-PS5-automation
