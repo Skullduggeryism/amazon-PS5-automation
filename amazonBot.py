@@ -41,9 +41,8 @@ def validate_captcha(chromeDriver):
 
 def purchase_item(chromeDriver):
     chromeDriver.get(ITEM_URL)
-    # Checks if out of stock, verify_stock returns False if not in stock
     l.info("Checking stock")
-    if not in_stock_check(chromeDriver): # removed not, as this was evaluating as true when item was not in stock
+    if not in_stock_check(chromeDriver): 
         return False
     # Checks price
     l.info("Checking price")
