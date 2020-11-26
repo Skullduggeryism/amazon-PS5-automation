@@ -23,6 +23,7 @@ To do:
 --- 
   * Make the Buy Now click and the Place Order click loop until they're successful - difficult to test
   * Solve CAPTCHA's less frequently, or only when required
+  * Currently hard exiting after purchase - need to refine
 
 Notes of caution: 
 --- 
