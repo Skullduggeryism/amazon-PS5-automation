@@ -22,6 +22,7 @@ Recommended to be run on Linux or Max. Would be a good script to run on a raspbe
 To do:
 --- 
   * Make the Buy Now click and the Place Order click loop until they're successful - difficult to test
+  * Solve CAPTCHA's less frequently, or only when required
 
 Notes of caution: 
 --- 
