@@ -108,7 +108,7 @@ def verify_price_within_limit(chromeDriver):
     l.info(f'price of item is:  {price}')
     l.info('limit value is: {}'.format(float(LIMIT_VALUE)))
 
-    if float(price.replace('$', '')) > LIMIT_VALUE:
+    if float(price.replace('$', '')) > float(LIMIT_VALUE):
         l.warn('PRICE IS TOO LARGE.')
         return False
 
