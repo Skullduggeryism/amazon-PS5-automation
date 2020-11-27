@@ -58,7 +58,7 @@ Sample Log:
     [26/Nov/2020 19:37:39] INFO - price of item is:  $39.99
     [26/Nov/2020 19:37:39] INFO - Checking shipper...
     [26/Nov/2020 19:37:39] INFO - Successfully verified shipper as: Amazon
-    [26/Nov/2020 19:37:39] INFO - Logging in as username@gmail.com
+    [26/Nov/2020 19:37:39] INFO - Logging in as username@example.com
     [26/Nov/2020 19:37:41] INFO - Checking out...
     [26/Nov/2020 19:37:57] INFO - Placed order!
     [26/Nov/2020 19:37:57] INFO - Successfully purchased item
