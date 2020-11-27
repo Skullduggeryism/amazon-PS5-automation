@@ -12,11 +12,11 @@ from amazoncaptcha import AmazonCaptcha
 LOGIN_MAIL = os.environ.get('LOGIN_MAIL', "")
 LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', "")
 
-ITEM_URL = os.environ.get('ITEM_URL', "https://smile.amazon.com/PlayStation-5-Console/dp/B08FC5L3RG")
+ITEM_URL = os.environ.get('ITEM_URL', "")
 
 CHECKOUT_URL = "https://www.amazon.com/gp/cart/view.html?ref_=nav_cart"
 ACCEPT_SHOP = "amazon"
-LIMIT_VALUE = 500.  # Maximum USD for the purchase
+LIMIT_VALUE = os.environ.get('LIMIT_VALUE', "")  # Maximum USD for the purchase
 
 
 def login(chromeDriver):

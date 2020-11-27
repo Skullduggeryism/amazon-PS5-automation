@@ -6,7 +6,7 @@
 
 This is a Python script that checks if an item is in stock, shipped by Amazon, and under a certain price limit. The script will then purchase the item with limited captcha solving abilities. 
 
-Example: script to buy a PS5 on Amazon (Please do not use this script for scalping, this is simply a free open source solution for those that want a console but are unable to get one due to market competitiveness)
+Example: script to buy an item on Amazon (Please do not use this script for scalping, this is simply a free open source solution for those that want a console but are unable to get one)
 
 forked from yosh1/amazon-automation
 
