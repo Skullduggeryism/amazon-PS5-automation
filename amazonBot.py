@@ -1,24 +1,22 @@
 import os
 import time
-from os.path import join, dirname
+from random import randint
+
 from logger import logger as l
-from selenium.common.exceptions import *
-from dotenv import load_dotenv
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import WebDriverWait
 from amazoncaptcha import AmazonCaptcha
 
-load_dotenv(verbose=True)
-dotenv_path = join(dirname(__file__), '.env')
-load_dotenv(dotenv_path)
 
-LOGIN_MAIL = os.environ.get('LOGIN_MAIL', None)
-LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', None)
+LOGIN_MAIL = os.environ.get('LOGIN_MAIL', "")
+LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', "")
 
-ITEM_URL = os.environ.get('ITEM_URL', None)
+ITEM_URL = os.environ.get('ITEM_URL', "https://smile.amazon.com/PlayStation-5-Console/dp/B08FC5L3RG")
 
-ACCEPT_SHOP = 'Amazon.com'
-#LIMIT_VALUE = 500    # Maximum USD for the purchase
-LIMIT_VALUE = os.environ.get('LIMIT_VALUE', None) # Let's add this to the .env file
-
+CHECKOUT_URL = "https://www.amazon.com/gp/cart/view.html?ref_=nav_cart"
+ACCEPT_SHOP = "amazon"
+LIMIT_VALUE = 500.  # Maximum USD for the purchase
 
 
 def login(chromeDriver):
@@ -28,6 +26,7 @@ def login(chromeDriver):
     chromeDriver.find_element_by_id('ap_password').send_keys(LOGIN_PASSWORD)
     chromeDriver.find_element_by_id('signInSubmit').click()
     l.info("Successfully logged in")
+
 
 def validate_captcha(chromeDriver):
     time.sleep(1)
@@ -39,71 +38,108 @@ def validate_captcha(chromeDriver):
     chromeDriver.find_element_by_class_name('a-button-text').click()
     time.sleep(1)
 
+
 def purchase_item(chromeDriver):
-    chromeDriver.get(ITEM_URL)
-    l.info("Checking stock")
-    if not in_stock_check(chromeDriver): 
+    l.info("Starting purchase process...")
+    # Checks if out of stock, price is right, and shipper is amazon keeps waiting if not in stock (for a random amount of time as to not get banned)
+    while not in_stock_check(chromeDriver) or not verify_price_within_limit(chromeDriver) or not seller_check(
+            chromeDriver):
+        l.info("Could not purchase desired item...waiting for stock/pricing/seller")
+        time.sleep(randint(15, 90))
+        chromeDriver.refresh()
+
+    # Logs in and purchases the item
+    login(chromeDriver)
+
+    # Solve Captcha
+    validate_captcha(chromeDriver)
+
+    if not checkout(chromeDriver):
         return False
-    # Checks price
-    l.info("Checking price")
-    if not verify_price_within_limit(chromeDriver):
-        return False
-    # Checks seller
-    l.info("Checking seller")
-    if not seller_check(chromeDriver):
-        return False
-    l.info("Clicking buy now")
-    chromeDriver.find_element_by_id('buy-now-button').click()
-    # clickbuynow = chromeDriver.find_element_by_id('buy-now-button')
-    # while clickbuynow.is_displayed():
-    #     clickbuynow.click() # 1 click buy
-    #     chromeDriver.refresh()
-    #     time.sleep(10)
-    #     clickbuynow = chromeDriver.find_element_by_id('buy-now-button')
-      
-    l.info("Placing order")
-    chromeDriver.find_element_by_name('placeYourOrder1').click()
-    # while true:        
-    #     try:
-    #         chromeDriver.find_element_by_name('placeYourOrder1').click()
-    #     except NoSuchElementException:
-    #         break
-    l.info("Successfully purchased item")
-    os._exit(0)
+    return True
+
 
 def in_stock_check(chromeDriver):
+    l.info("Checking stock...")
     inStock = False
+
     try:
-        stock = chromeDriver.find_element_by_id('availability').text
-        availability = stock.find("In Stock")
-        if availability == -1:
-            l.info("Item is not in stock")
-            raise Exception("Item is not in stock")
-            return False
-        elif availability == 0:
-            l.info("Item is in stock!")
+        if chromeDriver.find_element_by_id("priceblock_ourprice").text:
+            l.info("Item is in-stock!")
             inStock = True
+        else:
+            try:
+                chromeDriver.find_element_by_id("outOfStock")
+                l.info("Item is outOfStock")
+                chromeDriver.refresh()
+                inStock = False
+            except:
+                l.warn("Item is out of stock!")
+    except Exception as e:
+        l.error('Error checking stock: {}'.format(e))
+
     finally:
         return inStock
 
+
 def seller_check(chromeDriver):
-    element = chromeDriver.find_element_by_id('tabular-buybox-truncate-1').text
-    l.info('Seller: {}'.format(element))
-    shop = element.find(ACCEPT_SHOP)
+    l.info("Checking shipper...")
+    element = chromeDriver.find_element_by_id("tabular-buybox-truncate-0").text
+    shop = element.lower().find(ACCEPT_SHOP)
     if shop == -1:
-        raise Exception("Amazon is not the seller")
+        l.warn("Amazon is not the seller/shipper")
         return False
-    l.info("Successfully verified Seller")
-    return True
+    else:
+        l.info(f"Successfully verified shipper as: {element}")
+        return True
+
 
 def verify_price_within_limit(chromeDriver):
-    price = chromeDriver.find_element_by_id('priceblock_ourprice').text
-    price = price.replace('$', '')
-    price = float(price)
-    l.info('price of item is:  {}'.format(price))
+    try:
+        price = chromeDriver.find_element_by_id('priceblock_ourprice').text
+    except Exception as e:
+        l.error('Error verifying price: {}'.format(e))
+        return False
+
+    l.info(f'price of item is:  {price}')
     l.info('limit value is: {}'.format(float(LIMIT_VALUE)))
-    # int_price = int(price.replace(' ', '').replace(',', '').replace('$', ''))
-    if price > float(LIMIT_VALUE):
+
+    if float(price.replace('$', '')) > LIMIT_VALUE:
         l.warn('PRICE IS TOO LARGE.')
         return False
+
     return True
+
+
+def checkout(chromeDriver):
+    l.info("Checking out...")
+    chromeDriver.get(ITEM_URL)
+
+    chromeDriver.find_element_by_id('submit.add-to-cart').click()  # add to cart
+
+    chromeDriver.get(CHECKOUT_URL)
+
+    try:
+        WebDriverWait(chromeDriver, 3).until(
+            EC.element_to_be_clickable((By.XPATH, "//input[@name='proceedToRetailCheckout']"))).click()
+    except Exception as e:
+        l.warn(f"Could not place order: {e}")
+
+    count = 0
+    while (count < 3):
+        try:
+            WebDriverWait(chromeDriver, 3).until(
+                EC.element_to_be_clickable((By.XPATH, "//input[@name='placeYourOrder1']"))).click()
+            l.info("Placed order!")
+            return True
+        except Exception as e:
+            count += 1
+            l.warn(f"Try: {count}, Could not place order: {e}")
+    return False
+
+
+def checkout_1click(chromeDriver):
+    l.info("Buy now with 1-click")
+    chromeDriver.find_element_by_id('buy-now-button').click()
+    l.info("Confirming order")
+    chromeDriver.find_element_by_name('placeYourOrder1').click()

@@ -1,4 +1,6 @@
-FROM python:3.9-alpine
+FROM python:3.8-alpine3.11
+
+RUN apk add -U chromium chromium-chromedriver
 
 ARG project_dir=/python/app/
 ADD . ${project_dir}
