@@ -24,7 +24,7 @@ def launch():
     opt.add_argument("--remote-debugging-port=921")
     opt.add_argument("--disable-webgl")
     opt.add_argument("--disable-popup-blocking")
-    browser = webdriver.Chrome('chromedriver', options=opt, desired_capabilities=d)
+    browser = webdriver.Chrome('.\chromedriver', options=opt, desired_capabilities=d)
     # opt.add_argument("--user-data-dir=selenium") # added this option to use cookies, you may need to perform initial login within Selenium
     browser.implicitly_wait(10)
     browser.set_page_load_timeout(5)

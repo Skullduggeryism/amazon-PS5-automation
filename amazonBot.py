@@ -1,22 +1,26 @@
 import os
 import time
 from random import randint
-
+from dotenv import load_dotenv
+from os.path import join, dirname
 from logger import logger as l
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from amazoncaptcha import AmazonCaptcha
 
+load_dotenv(verbose=True)
+dotenv_path = join(dirname(__file__), '.env')
+load_dotenv(dotenv_path)
 
-LOGIN_MAIL = os.environ.get('LOGIN_MAIL', "")
-LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', "")
+LOGIN_MAIL = os.environ.get('LOGIN_MAIL', None)
+LOGIN_PASSWORD = os.environ.get('LOGIN_PASSWORD', None)
 
-ITEM_URL = os.environ.get('ITEM_URL', "")
+ITEM_URL = os.environ.get('ITEM_URL', None)
 
 CHECKOUT_URL = "https://www.amazon.com/gp/cart/view.html?ref_=nav_cart"
 ACCEPT_SHOP = "amazon"
-LIMIT_VALUE = os.environ.get('LIMIT_VALUE', "")  # Maximum USD for the purchase
+LIMIT_VALUE = os.environ.get('LIMIT_VALUE', None)  # Maximum USD for the purchase
 
 
 def login(chromeDriver):
