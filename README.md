@@ -8,7 +8,7 @@ This is a Python script that checks if an item is in stock, shipped by Amazon, a
 
 Example: script to buy an item on Amazon (Please do not use this script for scalping, this is simply a free open source solution for those that want a console but are unable to get one)
 
-forked from yosh1/amazon-automation
+forked from yosh1/amazon-automation & druyang/amazon-PS5-automation
 
 
 Notes of caution: 
@@ -58,7 +58,7 @@ Sample Log:
     [26/Nov/2020 19:37:39] INFO - price of item is:  $39.99
     [26/Nov/2020 19:37:39] INFO - Checking shipper...
     [26/Nov/2020 19:37:39] INFO - Successfully verified shipper as: Amazon
-    [26/Nov/2020 19:37:39] INFO - Logging in as ayang25@gmail.com
+    [26/Nov/2020 19:37:39] INFO - Logging in as username@gmail.com
     [26/Nov/2020 19:37:41] INFO - Checking out...
     [26/Nov/2020 19:37:57] INFO - Placed order!
     [26/Nov/2020 19:37:57] INFO - Successfully purchased item
