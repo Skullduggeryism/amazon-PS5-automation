@@ -1,8 +1,7 @@
 # Amazon Purchase Script 
 
 # Use at your own risk. Read thoroughly
-# Use at your own risk.
-# Use at your own risk.
+
 
 This is a Python script that checks if an item is in stock, shipped by Amazon, and under a certain price limit. The script will then purchase the item with limited captcha solving abilities. 
 
@@ -16,7 +15,7 @@ Notes of caution:
 
 Things to check for on Amazon/potential edge cases: 
 
- * Amazon 2FA (an option is to disable but this will **expose your account to security problems**)
+ * Amazon 2FA must be disabled and this will **expose your account to security problems**
  * 1 Click buy sometimes does not work. Sometimes it does. 
  * **Behavior is dependent on your default shipping address and payment method. Use at your own risk**
 
